@@ -58,27 +58,14 @@ const THEMES: Record<BandKey, {
     textColor: "#0F172A",
     logoSrc: "/stamp/logo-3.png",
     gradientStops: [
-      { offset: 0, color: "#FFE964" },
-      { offset: 1, color: "#F6DA5B" },
-      { offset: 5, color: "#DCAD42" },
-      { offset: 9, color: "#C98D30" },
-      { offset: 12, color: "#BE7A25" },
-      { offset: 14, color: "#BA7322" },
-      { offset: 17, color: "#A96017" },
-      { offset: 22, color: "#8B3E04" },
-      { offset: 24, color: "#A05A17" },
-      { offset: 30, color: "#D3A045" },
-      { offset: 34, color: "#F2CB61" },
-      { offset: 36, color: "#FFDC6D" },
-      { offset: 45, color: "#FFFFB5" },
-      { offset: 56, color: "#FCFDF6" },
-      { offset: 65, color: "#FFFF9C" },
-      { offset: 78, color: "#FDDC53" },
-      { offset: 80, color: "#F5CF49" },
-      { offset: 84, color: "#E1AD31" },
-      { offset: 89, color: "#C07709" },
-      { offset: 90, color: "#BB6E03" },
-      { offset: 100, color: "#5B1F03" },
+      { offset: 0, color: "#F7D864" },
+      { offset: 21, color: "#C69119" },
+      { offset: 46, color: "#D5A731" },
+      { offset: 54, color: "#E5BE49" },
+      { offset: 63, color: "#F0CE59" },
+      { offset: 72, color: "#F6D763" },
+      { offset: 84, color: "#F9DB67" },
+      { offset: 100, color: "#EDCA56" },
     ],
   },
 }
@@ -90,8 +77,8 @@ interface StampSectionProps {
 }
 
 export function StampSection({ className }: StampSectionProps) {
-  const [name, setName] = useState<string>("WSHN")
-  const [year, setYear] = useState<string>("2020")
+  const [name, setName] = useState<string>("WELLSPING HÀ NỘI")
+  const [year, setYear] = useState<string>("2013")
   const [iconIndex, setIconIndex] = useState<number>(1)
 
   const band: BandKey = useMemo(() => {
@@ -216,19 +203,19 @@ export function StampSection({ className }: StampSectionProps) {
   }
 
   return (
-    <section className={cn("relative w-full h-screen mt-24", className)} aria-label="Stamp section">
-      <div className="mx-auto w-full max-w-7xl px-6 py-16">
-        <h2 className="text-center font-daruma text-4xl text-[#F05023] mb-4">
+    <section id="stamp-section" className={cn("relative w-full min-h-screen py-10", className)} aria-label="Stamp section">
+      <div className="mx-auto w-full h-full max-w-7xl px-6">
+        <h2 className="text-center font-daruma text-3xl sm:text-4xl text-[#00687F] mb-4">
           Tạo dấu ấn riêng, lan tỏa sắc màu WISers
         </h2>
-        <h2 className="text-center font-daruma text-4xl text-[#F05023] mb-10">
+        <h2 className="text-center font-daruma text-3xl sm:text-4xl text-[#00687F] mb-10">
           Design Your Being Me       
         </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Preview */}
-          <div className="lg:col-span-7">
-            <div className="relative mx-auto w-fit rounded-2xl bg-white p-6 ring-1 ring-[#002855] overflow-visible">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 items-start">
+          {/* Preview - Mobile: trên cùng, Desktop: bên trái */}
+          <div className="w-full lg:col-span-7 order-1 lg:order-1">
+            <div className="relative mx-auto w-fit rounded-2xl bg-white p-4 sm:p-6 ring-1 ring-[#002855] overflow-visible">
               <svg
                 ref={svgRef}
                 width={svgDefs.size}
@@ -236,8 +223,15 @@ export function StampSection({ className }: StampSectionProps) {
                 viewBox={`0 0 ${svgDefs.size} ${svgDefs.size}`}
                 role="img"
                 aria-label="Stamp preview"
+                className="w-full h-auto max-w-full"
               >
                 <defs>
+                  <style>
+                    {`
+                      @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;700&display=swap');
+                      .stamp-text { font-family: 'Mulish', 'Arial', 'Helvetica', sans-serif; }
+                    `}
+                  </style>
                   <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                     {theme.gradientStops ? (
                       theme.gradientStops.map((s, i) => (
@@ -262,7 +256,7 @@ export function StampSection({ className }: StampSectionProps) {
                   r={svgDefs.outerR}
                   fill="#ffffff"
                   stroke="url(#borderGrad)"
-                  strokeWidth="6"
+                  strokeWidth="4"
                 />
                 {/* Inner thin ring */}
                 <circle
@@ -290,7 +284,7 @@ export function StampSection({ className }: StampSectionProps) {
                 {/* Icon người dùng chọn (đưa vào SVG để export đúng) */}
                 <image
                   href={`/stamp/icon-${iconIndex}-${band}.svg`}
-                  x={svgDefs.size * 0.27 - 45}
+                  x={svgDefs.size * 0.27 - 35}
                   y={svgDefs.size * 0.61 - 30}
                   width="64"
                   height="64"
@@ -298,32 +292,57 @@ export function StampSection({ className }: StampSectionProps) {
                 />
 
                 {/* NAME tại 1 giờ */}
-                <text fill="url(#borderGrad)" fontSize="28" fontWeight={600} textAnchor="middle" style={{ textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                <text 
+                  fill={band === "1" ? "#75492E" : band === "2" ? "#979DA1" : "#B57900"} 
+                  fontSize="28" 
+                  fontWeight={700} 
+                  textAnchor="middle" 
+                  className="stamp-text"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.2em' }}
+                >
                   <textPath href="#circlePath" startOffset="33.33%">{name}</textPath>
                 </text>
 
                 {/* SINCE tại 7 giờ – dùng path đảo chiều (radius nhỏ hơn chút) để tránh dính viền */}
-                <text fill="url(#borderGrad)" fontSize="28" fontWeight={600} textAnchor="middle" style={{ textTransform: 'uppercase', letterSpacing: '0.2em' }}>
+                <text 
+                  fill={band === "1" ? "#75492E" : band === "2" ? "#979DA1" : "#B57900"} 
+                  fontSize="28" 
+                  fontWeight={700} 
+                  textAnchor="middle" 
+                  className="stamp-text"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.2em' }}
+                >
                   <textPath href="#circlePathReverseSince" startOffset="66.67%">Since {year}</textPath>
                 </text>
               </svg>
-
-              {/* Decor được chuyển ra cấp section để vươn xuống section tiếp theo */}
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="lg:col-span-5">
-            <div className="space-y-8">
+          {/* Controls - Mobile: dưới cùng, Desktop: bên phải */}
+          <div className="w-full lg:col-span-5 order-2 lg:order-2">
+            <div className="space-y-6 sm:space-y-8">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2 uppercase">Tên của bạn</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Nhập tên (in trên viền ở góc 1h)"
-                  className="w-full rounded-2xl bg-[#F5F5F5] px-4 py-4 outline-none ring-0"
-                />
+                <label className="block text-sm font-bold text-slate-700 mb-2 uppercase">TÊN CỦA BẠN</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 20) {
+                        setName(value);
+                      }
+                    }}
+                    placeholder="Tối đa 20 ký tự"
+                    maxLength={20}
+                    className="w-full rounded-2xl bg-[#F5F5F5] px-4 py-4 outline-none ring-0 pr-16 relative z-10"
+                  />
+                  <img
+                    src="/Stamp-name-icon.svg"
+                    alt="Stamp icon"
+                    className="absolute right-4 -top-10 w-16 h-16 sm:w-20 sm:h-20 z-0"
+                  />
+                </div>
               </div>
 
               <div>
@@ -331,14 +350,21 @@ export function StampSection({ className }: StampSectionProps) {
                 <input
                   type="number"
                   value={year}
-                  onChange={(e) => setYear(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value.length <= 4) {
+                      setYear(value);
+                    }
+                  }}
+                  placeholder="2013"
+                  maxLength={4}
                   className="w-full rounded-2xl bg-[#F5F5F5] px-4 py-4 outline-none ring-0"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-3 uppercase">Icon lựa chọn</label>
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-3 sm:gap-4">
                   {Array.from({ length: ICON_COUNT }, (_, i) => i + 1).map((idx) => {
                     const active = iconIndex === idx
                     return (
@@ -352,7 +378,7 @@ export function StampSection({ className }: StampSectionProps) {
                         )}
                         aria-label={`Chọn icon ${idx}`}
                       >
-                        <img src={`/stamp/icon-${idx}-${band}.svg`} alt={`Icon ${idx}`} className="w-10 h-10" />
+                        <img src={`/stamp/icon-${idx}-${band}.svg`} alt={`Icon ${idx}`} className="w-8 h-8 sm:w-10 sm:h-10" />
                       </button>
                     )
                   })}
@@ -361,21 +387,13 @@ export function StampSection({ className }: StampSectionProps) {
 
               <div className="pt-2">
                 <Button onClick={handleDownload} className="w-full h-12 text-base font-semibold">
-                  Tải về PNG
+                  Tải về
                 </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Decor ở cấp section: vươn xuống dưới chồng lên section kế tiếp */}
-      <img
-        src="/decor-01.svg"
-        alt="Decor"
-        className="pointer-events-none select-none absolute -bottom-40 left-[195px] z-20 w-[348px] md:w-[348px] h-auto"
-        aria-hidden
-      />
     </section>
   )
 }

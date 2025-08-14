@@ -47,6 +47,7 @@ export const topicsI18n: Record<string, MonthI18n> = {
   },
   "2025-08-29": {
     vi: {
+      quote: "Tự hào việt nam",
       paragraphs: [
         "Ngày Quốc khánh 2/9 không chỉ là dấu mốc lịch sử của đất nước, mà còn là dịp để mỗi chúng ta nhìn lại, biết ơn và tự hào khi được sinh ra, lớn lên trên mảnh đất hình chữ S – nơi hội tụ truyền thống kiên cường, lòng nhân ái và khát vọng vươn lên. Trong tinh thần ấy, We Day – Tự hào Việt Nam là dịp để WISers gửi lời tri ân đến thế hệ đi trước đã dựng xây hòa bình; khẳng định niềm tin vào một thế hệ mới tự chủ, bản lĩnh, giàu lòng nhân văn; và lan tỏa tình yêu đất nước qua những hình ảnh thân thuộc: sắc đỏ sao vàng, tà áo dài, trang phục truyền thống, hình ảnh anh bộ đội, hay chính đồng phục Wellspring. Trong trái tim mỗi WISer hôm nay, tình yêu Việt Nam không chỉ là một cảm xúc, mà còn là động lực để học tập, sáng tạo và sống có trách nhiệm hơn mỗi ngày – trở thành chiếc cầu nối giữa quá khứ, hiện tại và tương lai.",
       ],
