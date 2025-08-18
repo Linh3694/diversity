@@ -393,7 +393,7 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
               ))}
             </div>
             {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-[10px] leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
+              <div className="mt-2 text-slate-600 text-[10px] leading-loose">{monthI18n?.dressCode?.[language]}</div>
             ) : null}
           </div>
           {localized?.quote && <p className="text-[10px] md:text-[16px] mb-2 font-semibold leading-[2] md:leading-[2.2]" style={{ color: accent }}>{localized.quote}</p>}
@@ -421,7 +421,7 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
         </div>
 
         <div className="md:col-span-6">
-          <div className="hidden lg:block relative w-[348px] h-[500px] mx-auto">
+          <div className="hidden lg:block relative w-[348px] h-[450px] mx-auto">
             <img src={topicsI18n[monthId]?.photoSrc || photoSrc} alt={topicTitle} className="block w-full h-full object-contain object-top" />
           </div>
           {/* Dress code moved below the image */}
@@ -441,7 +441,7 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
               ))}
             </div>
             {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-lg leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
+              <div className="mt-2 text-slate-600 text-lg leading-loose">{monthI18n?.dressCode?.[language]}</div>
             ) : null}
           </div>
         </div>
@@ -482,7 +482,7 @@ function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoS
               ))}
             </div>
             {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-[10px] leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
+              <div className="mt-2 text-slate-600 text-[10px] leading-loose">{monthI18n?.dressCode?.[language]}</div>
             ) : null}
           </div>
           {localized?.quote && <p className="text-[10px] md:text-lg lg:mb-4 mb-2 mt-2 lg:mt-0 font-semibold leading-[2] md:leading-[2.2]" style={{ color: specialColor }}>{localized.quote}</p>}
@@ -530,7 +530,7 @@ function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoS
               ))}
             </div>
             {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-[16px] leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
+              <div className="mt-2 text-slate-600 text-[16px] leading-loose">{monthI18n?.dressCode?.[language]}</div>
             ) : null}
           </div>
         </div>
