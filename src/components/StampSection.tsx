@@ -77,7 +77,7 @@ interface StampSectionProps {
 }
 
 export function StampSection({ className }: StampSectionProps) {
-  const [name, setName] = useState<string>("WELLSPING HÀ NỘI")
+  const [name, setName] = useState<string>("WELLSPRING HÀ NỘI")
   const [year, setYear] = useState<string>("2013")
   const [iconIndex, setIconIndex] = useState<number>(1)
 

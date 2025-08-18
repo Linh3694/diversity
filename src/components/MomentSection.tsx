@@ -14,8 +14,8 @@ const SLIDES = [
 
 const MOBILE_SLIDES = [
   "/moment-01-mobile.webp",
-  "/moment-02.webp",
-  "/moment-03.webp",
+  "/moment-02-mobile.webp",
+  "/moment-03-mobile.webp",
 ] as const
 
 export function MomentSection({ className, heightClassName }: MomentSectionProps) {

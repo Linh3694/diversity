@@ -23,7 +23,7 @@ export function Header({ language, onToggleLanguage, className }: HeaderProps) {
         {/* Left logos */}
         <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
           <img
-            src="/wellspring-logo.svg"
+            src="/wellspring-logo.png"
             alt="Wellspring Logo"
             className="h-12 w-auto md:h-16"
           />

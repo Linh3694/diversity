@@ -62,8 +62,8 @@ const TOPICS: TopicConfig[] = [
     bgClass: "bg-[#EA9A20]",
     accent: "#EA9A20",
     months: [
-      { id: "2025-10-10", label: "10/10/2025", photoSrc: "/Herosection-background.webp" },
-      { id: "2025-11-07", label: "7/11/2025", photoSrc: "/Herosection-background.webp" },
+      { id: "2025-10-10", label: "10/10/2025", photoSrc: "/Herosection-background.webp", disabled: true },
+      { id: "2025-11-07", label: "7/11/2025", photoSrc: "/Herosection-background.webp", disabled: true },
     ],
   },
   {
@@ -74,20 +74,20 @@ const TOPICS: TopicConfig[] = [
     bgClass: "bg-[#0CA58A]",
     accent: "#0CA58A",
     months: [
-      { id: "2025-12-12", label: "12/2025", photoSrc: "/Herosection-background.webp" },
-      { id: "2026-01-16", label: "1/2026", photoSrc: "/Herosection-background.webp" },
+      { id: "2025-12-12", label: "12/2025", photoSrc: "/Herosection-background.webp", disabled: true },
+      { id: "2026-01-16", label: "1/2026", photoSrc: "/Herosection-background.webp", disabled: true },
     ],
   },
   {
     key: "interested",
     title: "INTERESTED WISers",
     range: "2–3/2026",
-    image: "/interestd-wisers.png",
+    image: "/interested-wisers.png",
     bgClass: "bg-[#BED100]",
     accent: "#BED100",
     months: [
-      { id: "2026-02-20", label: "2/2026", photoSrc: "/Herosection-background.webp" },
-      { id: "2026-03-20", label: "3/2026", photoSrc: "/Herosection-background.webp" },
+      { id: "2026-02-20", label: "2/2026", photoSrc: "/Herosection-background.webp", disabled: true },
+      { id: "2026-03-20", label: "3/2026", photoSrc: "/Herosection-background.webp", disabled: true },
     ],
   },
   {
@@ -98,8 +98,8 @@ const TOPICS: TopicConfig[] = [
     bgClass: "bg-[#EB4A25]",
     accent: "#EB4A25",
     months: [
-      { id: "2026-04-17", label: "4/2026", photoSrc: "/Herosection-background.webp" },
-      { id: "2026-05-15", label: "5/2026", photoSrc: "/Herosection-background.webp" },
+      { id: "2026-04-17", label: "4/2026", photoSrc: "/Herosection-background.webp", disabled: true },
+      { id: "2026-05-15", label: "5/2026", photoSrc: "/Herosection-background.webp", disabled: true },
     ],
   },
 ]
@@ -140,7 +140,7 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
           <h2 className="font-daruma text-lg sm:text-2xl md:text-4xl text-slate-900 lg:mb-3">
             Khám phá các chủ đề của Diversity Days
           </h2>
-          <p className="font-daruma text-lg md:text-2xl text-slate-900 mb-6 lg:mb-16">
+          <p className="font-daruma text-lg sm:text-2xl md:text-4xl text-slate-900 mb-6 lg:mb-16">
             Cộng đồng WISers đa dạng và gắn kết
           </p>
           <p className="text-slate-700 text-base md:text-lg">
@@ -150,15 +150,19 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
 
         {/* Topic cards in 2 centered rows */}
         <div className="mt-10 flex flex-col items-center gap-10">
-          {/* Row 1: 2 items on mobile, 3 items on desktop */}
-          <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-8 w-full">
+          {/* Row 1: mindful - active (mobile) / mindful - active - generous (desktop) */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 place-items-center gap-8 w-full z-20">
             {TOPICS.slice(0, 2).map((t) => (
               <button
                 key={t.key}
                 type="button"
-                onClick={() => setActiveTopicKey(t.key)}
-                className="relative w-full max-w-[400px] overflow-hidden rounded-[56px] focus:outline-none"
+                onClick={() => t.key === "mindful" ? setActiveTopicKey(t.key) : null}
+                className={cn(
+                  "relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none",
+                  t.key !== "mindful" && "opacity-100 cursor-not-allowed"
+                )}
                 aria-label={t.title}
+                disabled={t.key !== "mindful"}
               >
                 <img src={t.image} alt={t.title} className="block w-full h-auto" />
               </button>
@@ -167,9 +171,10 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
             <div className="hidden lg:block">
               <button
                 type="button"
-                onClick={() => setActiveTopicKey(TOPICS[2].key)}
-                className="relative w-full max-w-[400px] overflow-hidden rounded-[56px] focus:outline-none"
+                onClick={() => null}
+                className="relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
                 aria-label={TOPICS[2].title}
+                disabled={true}
               >
                 <img src={TOPICS[2].image} alt={TOPICS[2].title} className="block w-full h-auto" />
               </button>
@@ -177,7 +182,7 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
           </div>
 
           {/* Details shows right after row 1 if a row-1 topic is active */}
-          {activeTopic && activeIndex > -1 && activeIndex < 3 && (
+          {activeTopic && activeIndex >= 0 && activeIndex < 3 && (
             <div ref={detailsRef} className="w-full">
               <TopicDetails
                 topicTitle={activeTopic.title}
@@ -190,30 +195,32 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
             </div>
           )}
 
-          {/* Row 2: 2 items on mobile, 2 items on desktop */}
+          {/* Row 2: interested - connected */}
           <div className="grid grid-cols-2 place-items-center gap-8 w-full">
-            {TOPICS.slice(2, 4).map((t) => (
+            {TOPICS.slice(3, 5).map((t) => (
               <button
                 key={t.key}
                 type="button"
-                onClick={() => setActiveTopicKey(t.key)}
-                className="relative w-full max-w-[400px] overflow-hidden rounded-[56px] focus:outline-none"
+                onClick={() => null}
+                className="relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
                 aria-label={t.title}
+                disabled={true}
               >
                 <img src={t.image} alt={t.title} className="block w-full h-auto" />
               </button>
             ))}
           </div>
 
-          {/* Row 3: 1 item on mobile only */}
-          <div className="grid grid-cols-1 lg:hidden place-items-center gap-8 w-full">
-            {TOPICS.slice(4).map((t) => (
+          {/* Row 3: 1 item on mobile only (generous) */}
+          <div className="grid grid-cols-1 lg:hidden place-items-center gap-8 w-full z-20">
+            {TOPICS.slice(2, 3).map((t) => (
               <button
                 key={t.key}
                 type="button"
-                onClick={() => setActiveTopicKey(t.key)}
-                className="relative w-full max-w-[160px] overflow-hidden rounded-[56px] focus:outline-none"
+                onClick={() => null}
+                className="relative w-full max-w-[160px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
                 aria-label={t.title}
+                disabled={true}
               >
                 <img src={t.image} alt={t.title} className="block w-full h-auto" />
               </button>
