@@ -44,14 +44,26 @@ const TOPICS: TopicConfig[] = [
         id: "2025-08-15",
         label: "15/8/2025",
         photoSrc: "/15-08-2025.png",
-        description:
-          "Mỗi cảm xúc đều có giá trị. Every emotion has value. Every color is a part of who you are.",
         variant: "normal",
-        dressColors: ["#FFD54F", "#0F2A44", "#E53935", "#E0E0E0", "#4A2E83"],
       },
-        { id: "2025-08-29", label: "29/8/2025", photoSrc: "/29-08-2025.png", variant: "special", dressColors: ["#EB1D27", "#FFCC00"] },
-        { id: "2025-09-12", label: "12/9/2025", photoSrc: "/Herosection-background.webp", disabled: true },
-        { id: "2025-09-26", label: "26/9/2025", photoSrc: "/Herosection-background.webp", disabled: true },
+      { 
+        id: "2025-08-29", 
+        label: "29/8/2025", 
+        photoSrc: "/29-08-2025.png",
+        variant: "special", 
+      },
+      { 
+        id: "2025-09-12", 
+        label: "12/9/2025", 
+        photoSrc: "/12-09-2025.png",
+        variant: "normal", 
+      },
+      { 
+        id: "2025-09-26", 
+        label: "26/9/2025", 
+        photoSrc: "/26-09-2025.png",
+        variant: "normal", 
+      },
     ],
   },
   {
@@ -307,6 +319,7 @@ function TopicDetails({ topicTitle, months, activeMonthId, onSelectMonth, langua
             topicTitle={topicTitle}
             language={language}
             photoSrc={monthActive.photoSrc}
+            dressColors={undefined}
             accent={accent}
           />
         ) : (
@@ -316,7 +329,7 @@ function TopicDetails({ topicTitle, months, activeMonthId, onSelectMonth, langua
             topicTitle={topicTitle}
             language={language}
             photoSrc={monthActive.photoSrc}
-            dressColors={monthActive.dressColors}
+                            dressColors={undefined}
             accent={accent}
           />
         ) }
@@ -342,6 +355,7 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
   const preferred = monthI18n?.[language]
   const fallback = language === 'vi' ? monthI18n?.en : monthI18n?.vi
   const localized: LocalizedContent | undefined = (preferred && (preferred.quote || preferred.paragraphs?.length || preferred.bullets?.length || preferred.outro)) ? preferred : fallback
+  const finalDressColors = monthI18n?.dressColors || dressColors
   const leftColRef = useRef<HTMLDivElement | null>(null)
   const [matchHeight, setMatchHeight] = useState<number | null>(null)
 
@@ -366,11 +380,19 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
           <div className="block lg:hidden">
             <div className="font-semibold mb-3 text-[10px] leading-loose" style={{ color: accent }}>Dress code</div>
             <div className="flex items-center gap-3">
-              {dressColors?.map((c, i) => (
-                <span key={i} className="inline-block h-6 w-6 rounded-full" style={{ backgroundColor: c }} aria-hidden />
+              {finalDressColors?.map((c, i) => (
+                <span 
+                  key={i} 
+                  className="inline-block h-6 w-6 rounded-full border-2" 
+                  style={{ 
+                    backgroundColor: c, 
+                    borderColor: 'rgba(0, 0, 0, 0.2)' 
+                  }} 
+                  aria-hidden 
+                />
               ))}
             </div>
-            {dressColors?.length ? (
+            {finalDressColors?.length ? (
               <div className="mt-2 text-slate-600 text-[10px] leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
             ) : null}
           </div>
@@ -406,11 +428,19 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
           <div className="hidden lg:block mt-8">
             <div className="font-semibold mb-3 text-lg leading-loose" style={{ color: accent }}>Dress code</div>
             <div className="flex items-center gap-8">
-              {dressColors?.map((c, i) => (
-                <span key={i} className="inline-block h-10 w-10 rounded-full" style={{ backgroundColor: c }} aria-hidden />
+              {finalDressColors?.map((c, i) => (
+                <span 
+                  key={i} 
+                  className="inline-block h-10 w-10 rounded-full border-2" 
+                  style={{ 
+                    backgroundColor: c, 
+                    borderColor: 'rgba(0, 0, 0, 0.2)' 
+                  }} 
+                  aria-hidden 
+                />
               ))}
             </div>
-            {dressColors?.length ? (
+            {finalDressColors?.length ? (
               <div className="mt-2 text-slate-600 text-lg leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
             ) : null}
           </div>
@@ -420,11 +450,12 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
   )
 }
 
-function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoSrc, accent }: MonthContentBaseProps) {
+function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoSrc, dressColors, accent }: MonthContentBaseProps) {
   const monthI18n = topicsI18n[monthId]
   const preferred = monthI18n?.[language]
   const fallback = language === 'vi' ? monthI18n?.en : monthI18n?.vi
   const localized: LocalizedContent | undefined = (preferred && (preferred.quote || preferred.paragraphs?.length || preferred.bullets?.length || preferred.outro)) ? preferred : fallback
+  const finalDressColors = monthI18n?.dressColors || dressColors
   const specialColor = '#ED1C24'
 
   return (
@@ -437,12 +468,24 @@ function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoS
           </div>
           <div className="block lg:hidden lg:mb-8 mb-4">
             <div className="font-semibold mb-3 text-[10px] leading-loose" style={{ color: specialColor }}>Dress code</div>
-            <div className="flex items-center gap-4">
-              <img src="/flag-vi.png" alt="Việt Nam" className="inline-block h-6 w-6 rounded-full object-cover" />
+            <div className="flex items-center gap-3">
+              {finalDressColors?.map((c, i) => (
+                <span 
+                  key={i} 
+                  className="inline-block h-6 w-6 rounded-full border-2" 
+                  style={{ 
+                    backgroundColor: c, 
+                    borderColor: 'rgba(0, 0, 0, 0.2)' 
+                  }} 
+                  aria-hidden 
+                />
+              ))}
             </div>
-            <div className="mt-2 text-slate-600 text-[10px] leading-loose">Trang phục có họa tiết: Cờ đỏ - sao vàng, lễ phục, quần áo bộ đội</div>
+            {finalDressColors?.length ? (
+              <div className="mt-2 text-slate-600 text-[10px] leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
+            ) : null}
           </div>
-          {localized?.quote && <p className="text-[10px] md:text-lg lg:mb-4 mb-2 mt-2 lg:mt-0 font-semibold leading-[2] md:leading-[2.2]" style={{ color: specialColor }}>"{localized.quote}"</p>}
+          {localized?.quote && <p className="text-[10px] md:text-lg lg:mb-4 mb-2 mt-2 lg:mt-0 font-semibold leading-[2] md:leading-[2.2]" style={{ color: specialColor }}>{localized.quote}</p>}
           {localized?.paragraphs && (
             <div className="text-[#002855] text-[10px] md:text-[16px] text-justify leading-[2.0] md:leading-[2.1]">
               {localized.paragraphs.join('\n')}
@@ -473,10 +516,22 @@ function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoS
           {/* Dress code moved below the image */}
           <div className="hidden lg:block mt-8">
             <div className="font-semibold mb-3 text-[16px] leading-loose" style={{ color: specialColor }}>Dress code</div>
-            <div className="flex items-center gap-4">
-              <img src="/flag-vi.png" alt="Việt Nam" className="inline-block h-10 w-10 rounded-full object-cover" />
+            <div className="flex items-center gap-8">
+              {finalDressColors?.map((c, i) => (
+                <span 
+                  key={i} 
+                  className="inline-block h-10 w-10 rounded-full border-2" 
+                  style={{ 
+                    backgroundColor: c, 
+                    borderColor: 'rgba(0, 0, 0, 0.2)' 
+                  }} 
+                  aria-hidden 
+                />
+              ))}
             </div>
-            <div className="mt-2 text-slate-600 text-[16px] leading-loose">Trang phục có họa tiết: Cờ đỏ - sao vàng, lễ phục, quần áo bộ đội</div>
+            {finalDressColors?.length ? (
+              <div className="mt-2 text-slate-600 text-[16px] leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
+            ) : null}
           </div>
         </div>
       </div>
