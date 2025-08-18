@@ -396,7 +396,7 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
               <div className="mt-2 text-slate-600 text-[10px] leading-loose">Mặc theo tâm trạng hôm đó – có thể cài mood badge</div>
             ) : null}
           </div>
-          {localized?.quote && <p className="text-[10px] md:text-[16px] mb-2 font-semibold leading-[2] md:leading-[2.2]" style={{ color: accent }}>"{localized.quote}"</p>}
+          {localized?.quote && <p className="text-[10px] md:text-[16px] mb-2 font-semibold leading-[2] md:leading-[2.2]" style={{ color: accent }}>{localized.quote}</p>}
           {localized?.paragraphs && (
             <div className="text-[#002855] text-[10px] lg:text-[16px] text-justify whitespace-pre-line leading-[2.0] md:leading-[2.3]">
               {localized.paragraphs.join('\n')}
@@ -421,8 +421,8 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
         </div>
 
         <div className="md:col-span-6">
-          <div className="hidden lg:block relative w-[348px] max-h-[500px] mx-auto rotate-1" style={{ height: matchHeight ?? 900 }}>
-            <img src={topicsI18n[monthId]?.photoSrc || photoSrc} alt={topicTitle} className="block w-full object-contain object-top  " />
+          <div className="hidden lg:block relative w-[348px] h-[500px] mx-auto">
+            <img src={topicsI18n[monthId]?.photoSrc || photoSrc} alt={topicTitle} className="block w-full h-full object-contain object-top" />
           </div>
           {/* Dress code moved below the image */}
           <div className="hidden lg:block mt-8">
@@ -510,8 +510,8 @@ function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoS
         </div>
 
         <div className="hidden lg:block md:col-span-6">
-          <div className="relative max-w-[500px] max-h-[500px] mx-auto">
-            <img src={topicsI18n[monthId]?.photoSrc || photoSrc} alt={topicTitle} className="block w-full h-fit object-contain object-top" />
+          <div className="relative w-[400px] h-[500px] mx-auto">
+            <img src={topicsI18n[monthId]?.photoSrc || photoSrc} alt={topicTitle} className="block w-full h-full object-contain object-top" />
           </div>
           {/* Dress code moved below the image */}
           <div className="hidden lg:block mt-8">
