@@ -208,9 +208,16 @@ export function StampSection({ className }: StampSectionProps) {
         <h2 className="text-center font-daruma text-3xl sm:text-4xl text-[#00687F] mb-4">
           Tạo dấu ấn riêng, lan tỏa sắc màu WISers
         </h2>
-        <h2 className="text-center font-daruma text-3xl sm:text-4xl text-[#00687F] mb-10">
-          Design Your Being Me       
-        </h2>
+        <div className="flex items-center justify-center mb-10">
+          <h2 className="font-daruma text-3xl sm:text-4xl text-[#00687F] mr-3">
+            Design Your Being Me
+          </h2>
+          <img
+            src="/star.png"
+            alt="Star icon"
+            className="w-8 h-8 sm:w-10 sm:h-10 lg:w-20 lg:h-20"
+          />
+        </div>
 
         <div className="flex flex-col lg:grid lg:grid-cols-12 gap-10 items-start">
           {/* Preview - Mobile: trên cùng, Desktop: bên trái */}
@@ -392,6 +399,22 @@ export function StampSection({ className }: StampSectionProps) {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Stamp sample image */}
+        <div className="mt-16 text-center">
+          {/* Desktop image */}
+          <img
+            src="/stamp-sample.png"
+            alt="Mẫu stamp Wellspring"
+            className="hidden md:block mx-auto max-w-full h-auto"
+          />
+          {/* Mobile image */}
+          <img
+            src="/stamp-sample-mobile.png"
+            alt="Mẫu stamp Wellspring"
+            className="block md:hidden mx-auto max-w-full h-auto"
+          />
         </div>
       </div>
     </section>

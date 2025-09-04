@@ -91,23 +91,29 @@ export function IntroductionSection({ className, heightClassName }: Introduction
           {/* Mobile: Text content ở dưới ảnh, Desktop: Text bên trái */}
           <div className="lg:col-span-7 lg:mr-16 order-2 lg:order-1">
             {/* H2 ẩn trên mobile */}
-            <h2 className="hidden lg:block font-daruma text-2xl sm:text-3xl md:text-4xl text-[#FF5A3C] mb-12">
-              Khi khác biệt tạo nên gắn kết
-            </h2>
+            <div className="flex items-center mb-12">
+              <img
+                src="/star.png"
+                alt="Star icon"
+                className="w-8 h-8 sm:w-10 sm:h-10 lg:w-20 lg:h-20 mr-3"
+              />
+              <h2 className="font-daruma text-2xl sm:text-3xl md:text-4xl text-[#FF5A3C]">
+                Khi khác biệt tạo nên gắn kết
+              </h2>
+            </div>
             
-            <div className="space-y-3 lg:space-y-4 text-black text-justify text-[12px] sm:text-sm lg:text-lg leading-6 sm:leading-7 lg:leading-8">
+            <div className="space-y-3 lg:space-y-10 text-black lg:text-justify text-center text-[12px] sm:text-sm lg:text-lg leading-6 sm:leading-7 lg:leading-8">
               <p>
                 Mỗi WISer như một vì sao mang sắc màu riêng: có  ngôi sao rực rỡ như bình minh, ngôi sao trầm ấm như đêm thu, ngôi sao lấp lánh bởi nét duyên ngầm khó quên. Diversity Days là khoảnh khắc những vì sao ấy cùng hiện diện, cùng tỏa sáng, tạo nên một bầu trời chung rực rỡ, ấm áp và đầy sức sống.              </p>
-              <p>
-                Diễn ra vào mỗi thứ Sáu và những ngày đặc biệt trong năm, Diversity Days là ngày mỗi WISer được “Being Me” trọn vẹn – tự do lựa chọn trang phục theo chủ đề, thể hiện văn hóa, cá tính và sáng tạo của mình. Mỗi bộ trang phục là một câu chuyện: về nơi ta thuộc về, ước mơ ta theo đuổi, và chính con người thật của ta.              </p>
-              <p>
-                Khi những sắc màu hòa quyện, điều kỳ diệu xảy ra: chúng không lấn át, mà tôn vinh nhau. Từ sự đa dạng nảy sinh thấu cảm; từ kết nối, hạnh phúc đâm chồi. Đó chính là tinh thần Happy WISers: Being Well-Being Me – khỏe mạnh, trọn vẹn, tỏa sáng cùng nhau trong một cộng đồng biết yêu thương và tôn trọng.              </p>
+
+              <p className="font-daruma text-[#FF5A3C] text-2xl lg:leading-10 text-center lg:text-left">
+                "Mỗi WISer là một vì sao với sắc màu và ánh sáng riêng. Diversity Days là khi những vì sao ấy cùng hội tụ, tỏa sáng thành một dải ngân hà rực rỡ – nơi tinh thần Well-being lan tỏa từ cá nhân đến cộng đồng."</p>
             </div>   
           </div>
         </div>
 
         {/* Feature points - Mobile: 1 point 1 hàng, Desktop: 3 cột */}
-        <div className="grid grid-cols-1 gap-4 lg:gap-x-6 lg:gap-y-4 lg:grid-cols-3 mb-12 lg:mb-16">
+        <div className="grid grid-cols-1 gap-4 lg:gap-x-6 lg:gap-y-4 lg:grid-cols-3 mb-12 lg:mb-16 mx-auto lg:mx-0">
           {/* Point 1 */}
           <div className="flex text-base lg:text-lg items-start gap-3 lg:col-start-1 lg:row-start-1 mb-3 lg:mb-6">
             <img src="/intro-icon-1.svg" alt="Icon 1" className="lg:mr-2 h-8 w-8 lg:h-20 lg:w-20 flex-shrink-0" />

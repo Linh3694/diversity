@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 type Language = "en" | "vi"
@@ -9,8 +8,8 @@ interface HeaderProps {
   className?: string
 }
 
-export function Header({ language, onToggleLanguage, className }: HeaderProps) {
-  const nextLang: Language = language === "en" ? "vi" : "en"
+export function Header({  className }: HeaderProps) {
+  // const nextLang: Language = language === "en" ? "vi" : "en"
 
   return (
     <header
@@ -42,7 +41,7 @@ export function Header({ language, onToggleLanguage, className }: HeaderProps) {
             className="h-8 w-auto sm:h-12 " 
           />
 
-          <Button
+          {/* <Button
             variant="outline"
             size="icon"
             className="h-8 w-8 sm:h-10 sm:w-10 rounded-full p-0"
@@ -54,7 +53,7 @@ export function Header({ language, onToggleLanguage, className }: HeaderProps) {
               alt={language === "en" ? "English" : "Vietnamese"}
               className="h-6 w-6 sm:h-8 sm:w-8 rounded-full object-cover"
             />
-          </Button>
+          </Button> */}
         </div>
       </div>
     </header>
