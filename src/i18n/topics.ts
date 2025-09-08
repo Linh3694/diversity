@@ -38,7 +38,7 @@ export const topicsI18n: Record<string, MonthI18n> = {
       en: { paragraphs: [] },
       dressCode: {
         vi: "Mặc theo tâm trạng hôm đó – có thể cài mood badge",
-         en: "Wear according to your mood today - you can wear a mood badge"
+        en: "Mặc theo tâm trạng hôm đó – có thể cài mood badge"
     },
       variant: "normal",
       dressColors: ["#FFD54F", "#0F2A44", "#E53935", "#E0E0E0", "#4A2E83"],
@@ -54,7 +54,7 @@ export const topicsI18n: Record<string, MonthI18n> = {
     en: { paragraphs: [] },
     dressCode: {
         vi: "Trang phục có họa tiết: Cờ đỏ - sao vàng, lễ phục, quần áo bộ đội",
-        en: "Dress code: Red - gold star, military uniform, traditional Vietnamese clothing"
+        en: "Trang phục có họa tiết: Cờ đỏ - sao vàng, lễ phục, quần áo bộ đội"
       },
     variant: "special",
     dressColors: ["#EB1D27", "#FFCC00"],
@@ -69,7 +69,7 @@ export const topicsI18n: Record<string, MonthI18n> = {
     en: { paragraphs: [] },
     dressCode: {
         vi: "Màu trắng",
-        en: "White"
+        en: "Màu trắng"
       },
     variant: "normal",
     dressColors: ["#ffffff"],
@@ -84,7 +84,7 @@ export const topicsI18n: Record<string, MonthI18n> = {
     en: { paragraphs: [] },
     dressCode: {
         vi: "Trang phục màu đỏ, vàng/ trang phục truyền thống Việt Nam",
-        en: "Red, yellow/ traditional Vietnamese clothing"
+        en: "Trang phục màu đỏ, vàng/ trang phục truyền thống Việt Nam"
       },
     variant: "normal",
     dressColors: ["#EB1D27", "#FFCC00"],
