@@ -210,7 +210,7 @@ export function StampSection({ className }: StampSectionProps) {
         </h2>
         <div className="flex items-center justify-center mb-10">
           <h2 className="font-daruma text-3xl sm:text-4xl text-[#00687F] mr-3">
-            Design Your Being Me
+            Design Your "Being Me"
           </h2>
           <img
             src="/star.png"
