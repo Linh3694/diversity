@@ -50,7 +50,7 @@ export function IntroductionSection({ className, heightClassName }: Introduction
       <div className="absolute inset-0" />
 
       {/* Content overlay */}
-      <div className="relative mx-auto max-w-[1400px] h-full px-6 sm:px-8 md:px-36 flex flex-col">
+      <div className="relative mx-auto max-w-[1400px] h-full px-6 sm:px-8 lg:px-36 flex flex-col">
         <div className="grid grid-cols-1 items-center gap-6 lg:gap-8 lg:grid-cols-12 flex-1">
           {/* Mobile: Ảnh ở trên cùng, Desktop: Ảnh bên phải */}
           <div className="lg:col-span-5 lg:col-start-8 lg:row-start-1 self-center order-1 lg:order-2">
@@ -104,10 +104,13 @@ export function IntroductionSection({ className, heightClassName }: Introduction
             
             <div className="space-y-3 lg:space-y-10 text-black lg:text-justify text-center text-[12px] sm:text-sm lg:text-lg leading-6 sm:leading-7 lg:leading-8">
               <p>
-                Mỗi WISer như một vì sao mang sắc màu riêng: có  ngôi sao rực rỡ như bình minh, ngôi sao trầm ấm như đêm thu, ngôi sao lấp lánh bởi nét duyên ngầm khó quên. Diversity Days là khoảnh khắc những vì sao ấy cùng hiện diện, cùng tỏa sáng, tạo nên một bầu trời chung rực rỡ, ấm áp và đầy sức sống.              </p>
+              Mỗi WISer như một vì sao mang sắc màu riêng: có  ngôi sao rực rỡ như bình minh, ngôi sao trầm ấm như đêm thu, ngôi sao lấp lánh bởi nét duyên ngầm khó quên. Diversity Days là khoảnh khắc những vì sao ấy cùng hiện diện, cùng tỏa sáng, tạo nên một bầu trời chung rực rỡ, ấm áp và đầy sức sống.
+
+            </p>
 
               <p className="font-daruma text-[#FF5A3C] text-2xl lg:leading-10 text-center lg:text-left">
-                "Mỗi WISer là một vì sao với sắc màu và ánh sáng riêng. Diversity Days là khi những vì sao ấy cùng hội tụ, tỏa sáng thành một dải ngân hà rực rỡ – nơi tinh thần Well-being lan tỏa từ cá nhân đến cộng đồng."</p>
+                  "Từ sự đa dạng đến thấu cảm; từ kết nối đến hạnh phúc...Đó chính là tinh thần Happy WISers: Being Well-Being Me - khoẻ mạnh, trọn vẹn, toả sáng cùng nhau trong một cộng đồng biết yêu thương và tôn trọng."
+                </p>
             </div>   
           </div>
         </div>
@@ -119,7 +122,7 @@ export function IntroductionSection({ className, heightClassName }: Introduction
             <img src="/intro-icon-1.svg" alt="Icon 1" className="lg:mr-2 h-8 w-8 lg:h-20 lg:w-20 flex-shrink-0" />
             <div>
               <p className="font-bold text-xs lg:text-base text-[#00687F]">Diversity Days - WISer được "Being Me" trọn vẹn</p>
-              <p className="text-muted-foreground text-xs lg:text-base">Diễn ra vào mỗi thứ Sáu và những ngày đặc biệt</p>
+              <p className="text-muted-foreground text-xs lg:text-base">Diễn ra vào mỗi thứ Sáu những ngày đặc biệt</p>
             </div>
           </div>
 

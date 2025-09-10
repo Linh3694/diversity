@@ -230,7 +230,7 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
                 key={t.key}
                 type="button"
                 onClick={() => null}
-                className="relative w-full max-w-[160px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
+                className="relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
                 aria-label={t.title}
                 disabled={true}
               >

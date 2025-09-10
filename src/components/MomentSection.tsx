@@ -85,7 +85,7 @@ export function MomentSection({ className, heightClassName }: MomentSectionProps
       )}
       style={{
         backgroundImage: isMobile ? 'url(/moment-section-mobile.png)' : 'url(/moment-section.png)',
-        height: heightClassName ? undefined : isMobile ? '700px' : 'clamp(500px, 51.1vw, 980px)'
+        height: heightClassName ? undefined : isMobile ? '700px' : 'clamp(600px, 51.1vw, 980px)'
       }}
       aria-label="Moment section"
     >
