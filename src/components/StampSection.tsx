@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -80,6 +80,68 @@ export function StampSection({ className }: StampSectionProps) {
   const [name, setName] = useState<string>("WELLSPRING HÀ NỘI")
   const [year, setYear] = useState<string>("2009")
   const [iconIndex, setIconIndex] = useState<number>(1)
+  const [fontLoaded, setFontLoaded] = useState<boolean>(false)
+
+  // Safari font loading fix
+  useEffect(() => {
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    if (isSafari && !fontLoaded) {
+      console.log('Safari detected, forcing font reload...')
+
+      // Try FontFace API first (modern browsers)
+      if ('fonts' in document) {
+        const font = new FontFace('DFVN Darumadrop One', 'url(/fonts/DFVNDarumadropOne/DFVN-DarumadropOne.woff2) format("woff2")')
+        font.load().then(() => {
+          document.fonts.add(font)
+          console.log('Font loaded via FontFace API')
+          setFontLoaded(true)
+        }).catch((error) => {
+          console.warn('FontFace API failed:', error)
+          // Fallback to CSS injection
+          forceFontReload()
+        })
+      } else {
+        // Fallback for older Safari versions
+        forceFontReload()
+      }
+
+      // Fallback timeout - force render anyway after 1 second
+      const fallbackTimer = setTimeout(() => {
+        if (!fontLoaded) {
+          console.log('Fallback timeout reached, forcing render')
+          setFontLoaded(true)
+        }
+      }, 1000)
+
+      return () => clearTimeout(fallbackTimer)
+    }
+
+    function forceFontReload() {
+      console.log('Using CSS injection fallback for font loading')
+
+      // Force font reload by creating a temporary style
+      const style = document.createElement('style')
+      style.textContent = `
+        @font-face {
+          font-family: 'DFVN Darumadrop One Force';
+          src: url('/fonts/DFVNDarumadropOne/DFVN-DarumadropOne.woff2') format('woff2'),
+               url('/fonts/DFVNDarumadropOne/DFVN-DarumadropOne.ttf') format('truetype');
+          font-weight: 400;
+          font-style: normal;
+          font-display: block;
+        }
+        .font-daruma { font-family: 'DFVN Darumadrop One Force', 'Mulish', sans-serif !important; }
+      `
+      document.head.appendChild(style)
+
+      // Force re-render after font should be loaded
+      setTimeout(() => {
+        console.log('CSS injection font loading completed')
+        setFontLoaded(true)
+        // Keep the style to ensure font is available
+      }, 200)
+    }
+  }, [fontLoaded])
 
   const band: BandKey = useMemo(() => {
     const y = parseInt(year || "0", 10)
@@ -149,61 +211,199 @@ export function StampSection({ className }: StampSectionProps) {
 
   async function handleDownload() {
     if (!svgRef.current) return
+
     try {
+      console.log("Starting download process...")
+
       // Clone SVG và inline tất cả ảnh vào data URI để tránh CORS/thiếu hình khi export
       const clone = svgRef.current.cloneNode(true) as SVGSVGElement
       const images = Array.from(clone.querySelectorAll("image"))
-      await Promise.all(
-        images.map(async (img) => {
-          const href = img.getAttribute("href") || img.getAttributeNS("http://www.w3.org/1999/xlink", "href")
-          if (!href || href.startsWith("data:")) return
-          const resp = await fetch(href)
+
+      console.log(`Processing ${images.length} images...`)
+
+      // Xử lý từng hình ảnh với error handling và retry
+      for (const img of images) {
+        const href = img.getAttribute("href") || img.getAttributeNS("http://www.w3.org/1999/xlink", "href")
+        if (!href || href.startsWith("data:")) continue
+
+        try {
+          console.log(`Fetching image: ${href}`)
+          const resp = await fetch(href, {
+            mode: 'cors',
+            cache: 'default'
+          })
+
+          if (!resp.ok) {
+            console.warn(`Failed to fetch ${href}: ${resp.status}`)
+            continue
+          }
+
           const blob = await resp.blob()
-          const dataUrl: string = await new Promise((resolve) => {
+          const dataUrl: string = await new Promise((resolve, reject) => {
             const reader = new FileReader()
             reader.onload = () => resolve(reader.result as string)
+            reader.onerror = () => reject(new Error(`Failed to read ${href}`))
             reader.readAsDataURL(blob)
           })
+
           img.setAttribute("href", dataUrl)
           img.removeAttribute("xlink:href")
-        })
-      )
+          console.log(`Successfully processed ${href}`)
+        } catch (imageError) {
+          console.error(`Error processing image ${href}:`, imageError)
+          // Fallback: giữ nguyên href gốc nếu không thể inline
+        }
+      }
 
       const serializer = new XMLSerializer()
       const svgString = serializer.serializeToString(clone)
       const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`
 
+      console.log("SVG serialized, creating image...")
+
       const img = new Image()
       img.onload = () => {
-        // Xuất độ phân giải cao hơn (3x + theo DPR)
-        const baseScale = 3
-        const scale = Math.max(2, Math.round((window.devicePixelRatio || 1) * baseScale))
-        const canvas = document.createElement("canvas")
-        canvas.width = svgDefs.size * scale
-        canvas.height = svgDefs.size * scale
-        const ctx = canvas.getContext("2d")!
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.imageSmoothingEnabled = true
-        ctx.imageSmoothingQuality = "high"
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-        canvas.toBlob((blob) => {
-          if (!blob) return
-          const link = document.createElement("a")
-          link.href = URL.createObjectURL(blob)
-          link.download = `stamp-${year}@${scale}x.png`
-          document.body.appendChild(link)
-          link.click()
-          link.remove()
-        })
+        console.log("Image loaded, creating canvas...")
+
+        try {
+          // Xuất độ phân giải cao hơn (3x + theo DPR)
+          const baseScale = 3
+          const scale = Math.max(2, Math.round((window.devicePixelRatio || 1) * baseScale))
+          const canvas = document.createElement("canvas")
+          canvas.width = svgDefs.size * scale
+          canvas.height = svgDefs.size * scale
+          const ctx = canvas.getContext("2d")
+
+          if (!ctx) {
+            throw new Error("Could not get 2D context from canvas")
+          }
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.imageSmoothingEnabled = true
+          ctx.imageSmoothingQuality = "high"
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+          // Check if toBlob is supported
+          if (typeof canvas.toBlob === 'function') {
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                console.error("Canvas toBlob returned null")
+                fallbackDownload(dataUrl, scale)
+                return
+              }
+
+              try {
+                const link = document.createElement("a")
+                const blobUrl = URL.createObjectURL(blob)
+                link.href = blobUrl
+                link.download = `stamp-${year}@${scale}x.png`
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+
+                // Clean up blob URL after download
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
+
+                console.log("Download completed successfully")
+              } catch (blobError) {
+                console.error("Blob URL creation failed:", blobError)
+                fallbackDownload(dataUrl, scale)
+              }
+            })
+          } else {
+            console.warn("Canvas.toBlob not supported, using fallback")
+            fallbackDownload(dataUrl, scale)
+          }
+        } catch (canvasError) {
+          console.error("Canvas processing failed:", canvasError)
+          fallbackDownload(dataUrl, 2)
+        }
       }
+
+      img.onerror = () => {
+        console.error("Failed to load SVG image")
+        fallbackDownload(dataUrl, 2)
+      }
+
       img.src = dataUrl
     } catch (error) {
-      console.error("Failed to export PNG", error)
+      console.error("Failed to export PNG:", error)
+      alert("Có lỗi xảy ra khi tải về. Vui lòng thử lại hoặc liên hệ hỗ trợ.")
+    }
+  }
+
+  // Fallback download method using data URL directly
+  function fallbackDownload(dataUrl: string, scale: number) {
+    try {
+      console.log("Using fallback download method")
+
+      // Check if we're in a webview that might not support downloads
+      const isWebView = /FBAN|FBAV|FB_IAB|FB4A|FBMD|FBSV|FBSS|FBCR|FBID|FBLC|FBOP|FBRV|FBSN|FB_UA|FBSF|FBPN|FBLC/i.test(navigator.userAgent) ||
+                       /Zalo/i.test(navigator.userAgent) ||
+                       (navigator as any).standalone ||
+                       window.matchMedia('(display-mode: standalone)').matches
+
+      if (isWebView) {
+        console.log("Detected webview, trying alternative approach")
+
+        // For webviews, try to open in new tab/window first
+        const newWindow = window.open(dataUrl, '_blank')
+        if (newWindow) {
+          console.log("Opened in new window/tab")
+          return
+        }
+      }
+
+      // Standard download approach
+      const link = document.createElement("a")
+      link.href = dataUrl
+      link.download = `stamp-${year}@${scale}x.svg`
+
+      // For iOS Safari and some webviews
+      if (/Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent)) {
+        link.target = '_blank'
+        link.rel = 'noopener noreferrer'
+      }
+
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      console.log("Fallback download initiated")
+    } catch (fallbackError) {
+      console.error("Fallback download failed:", fallbackError)
+
+      // Last resort: try to copy to clipboard or show data URL
+      try {
+        // Try to copy data URL to clipboard as last resort
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(dataUrl).then(() => {
+            alert("Không thể tải về tự động. Data URL đã được sao chép vào clipboard. Vui lòng dán vào trình duyệt để tải về.")
+          }).catch(() => {
+            alert("Không thể tải về file. Vui lòng thử lại với trình duyệt khác hoặc liên hệ hỗ trợ.")
+          })
+        } else {
+          alert("Không thể tải về file. Vui lòng thử lại với trình duyệt khác hoặc liên hệ hỗ trợ.")
+        }
+      } catch (clipboardError) {
+        console.error("Clipboard fallback failed:", clipboardError)
+        alert("Không thể tải về file. Vui lòng thử lại với trình duyệt khác hoặc liên hệ hỗ trợ.")
+      }
     }
   }
 
   return (
-    <section id="stamp-section" className={cn("relative w-full min-h-screen py-10", className)} aria-label="Stamp section">
+    <section
+      id="stamp-section"
+      className={cn(
+        "relative w-full min-h-screen py-10",
+        /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+          ? (fontLoaded ? "font-loaded" : "font-loading")
+          : "",
+        className
+      )}
+      aria-label="Stamp section"
+    >
       <div className="mx-auto w-full h-full max-w-7xl px-6">
         <h2 className="text-center font-daruma text-3xl sm:text-4xl text-[#00687F] mb-4">
           Tạo dấu ấn riêng, lan tỏa sắc màu WISers

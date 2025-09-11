@@ -10,7 +10,27 @@
        url('/fonts/DFVNDarumadropOne/DFVN-DarumadropOne.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
+}
+
+/* Safari font loading fix */
+@supports (-webkit-appearance: none) {
+  .font-daruma {
+    font-family: 'DFVN Darumadrop One', 'Mulish', system-ui, -apple-system, sans-serif;
+    text-rendering: optimizeSpeed;
+  }
+}
+
+/* Prevent FOUC for Safari */
+.font-loading {
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.font-loaded {
+  visibility: visible;
+  opacity: 1;
 }
 
 @layer base {
