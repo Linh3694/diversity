@@ -217,52 +217,61 @@ export function StampSection({ className }: StampSectionProps) {
 
       // Clone SVG và inline tất cả ảnh vào data URI để tránh CORS/thiếu hình khi export
       const clone = svgRef.current.cloneNode(true) as SVGSVGElement
+      // Đảm bảo namespace để browser render chính xác khi rasterize
+      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg")
+      clone.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink")
+      clone.setAttribute("version", "1.1")
+
+      // Loại bỏ @import font trong <style> để tránh taint canvas
+      const styleEl = clone.querySelector("style")
+      if (styleEl) {
+        styleEl.textContent = ".stamp-text { font-family: 'Mulish', 'Arial', 'Helvetica', sans-serif; }"
+      }
+
+      // Đảm bảo textPath có cả href và xlink:href (tương thích trình duyệt cũ)
+      const textPaths = Array.from(clone.querySelectorAll("textPath"))
+      for (const tp of textPaths) {
+        const ref = tp.getAttribute("href") || tp.getAttributeNS("http://www.w3.org/1999/xlink", "href")
+        if (ref) {
+          tp.setAttribute("href", ref)
+          tp.setAttributeNS("http://www.w3.org/1999/xlink", "href", ref)
+        }
+      }
       const images = Array.from(clone.querySelectorAll("image"))
+
+      // Ghi lại vị trí và nguồn ảnh để lát nữa vẽ đè trực tiếp lên canvas (fix Safari)
+      const overlayImages: Array<{ src: string; x: number; y: number; width: number; height: number }> = []
+      overlayImages.push({
+        src: THEMES[band].logoSrc,
+        x: svgDefs.cx - 180,
+        y: svgDefs.cy - 170,
+        width: 350,
+        height: 350,
+      })
+      overlayImages.push({
+        src: `/stamp/icon-${iconIndex}-${band}.svg`,
+        x: svgDefs.size * 0.27 - 35,
+        y: svgDefs.size * 0.61 - 30,
+        width: 64,
+        height: 64,
+      })
 
       console.log(`Processing ${images.length} images...`)
 
-      // Xử lý từng hình ảnh với error handling và retry
-      for (const img of images) {
-        const href = img.getAttribute("href") || img.getAttributeNS("http://www.w3.org/1999/xlink", "href")
-        if (!href || href.startsWith("data:")) continue
-
-        try {
-          console.log(`Fetching image: ${href}`)
-          const resp = await fetch(href, {
-            mode: 'cors',
-            cache: 'default'
-          })
-
-          if (!resp.ok) {
-            console.warn(`Failed to fetch ${href}: ${resp.status}`)
-            continue
-          }
-
-          const blob = await resp.blob()
-          const dataUrl: string = await new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onload = () => resolve(reader.result as string)
-            reader.onerror = () => reject(new Error(`Failed to read ${href}`))
-            reader.readAsDataURL(blob)
-          })
-
-          img.setAttribute("href", dataUrl)
-          img.removeAttribute("xlink:href")
-          console.log(`Successfully processed ${href}`)
-        } catch (imageError) {
-          console.error(`Error processing image ${href}:`, imageError)
-          // Fallback: giữ nguyên href gốc nếu không thể inline
-        }
+      // Loại bỏ <image> khỏi SVG trước khi rasterize để tránh Safari drop ảnh
+      for (const imgEl of images) {
+        imgEl.remove()
       }
 
       const serializer = new XMLSerializer()
       const svgString = serializer.serializeToString(clone)
-      const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
+      const objectUrl = URL.createObjectURL(svgBlob)
 
       console.log("SVG serialized, creating image...")
 
       const img = new Image()
-      img.onload = () => {
+      const onRender = async () => {
         console.log("Image loaded, creating canvas...")
 
         try {
@@ -283,12 +292,67 @@ export function StampSection({ className }: StampSectionProps) {
           ctx.imageSmoothingQuality = "high"
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
+          // Cố định tham chiếu context để type checker hiểu luôn non-null trong closures
+          const context: CanvasRenderingContext2D = ctx
+
+          // Vẽ đè logo và icon trực tiếp lên canvas (fix Safari không render <image> trong SVG)
+          async function drawOverlay(overlay: { src: string; x: number; y: number; width: number; height: number }) {
+            try {
+              const resp = await fetch(overlay.src, { mode: 'cors', cache: 'no-cache' })
+              if (!resp.ok) {
+                console.warn(`Overlay fetch failed ${overlay.src}: ${resp.status}`)
+                return
+              }
+              const blob = await resp.blob()
+              const url = URL.createObjectURL(blob)
+              const overlayImg = new Image()
+              const doDraw = () => {
+                try {
+                  context.drawImage(
+                    overlayImg,
+                    Math.round(overlay.x * scale),
+                    Math.round(overlay.y * scale),
+                    Math.round(overlay.width * scale),
+                    Math.round(overlay.height * scale)
+                  )
+                } finally {
+                  URL.revokeObjectURL(url)
+                }
+              }
+              overlayImg.src = url
+              if ("decode" in overlayImg && typeof overlayImg.decode === "function") {
+                try {
+                  await (overlayImg as HTMLImageElement).decode()
+                  doDraw()
+                } catch (e) {
+                  console.warn("Overlay decode() failed, fallback to onload", e)
+                  await new Promise<void>((resolve) => {
+                    overlayImg.onload = () => { doDraw(); resolve() }
+                    overlayImg.onerror = () => resolve()
+                  })
+                }
+              } else {
+                await new Promise<void>((resolve) => {
+                  overlayImg.onload = () => { doDraw(); resolve() }
+                  overlayImg.onerror = () => resolve()
+                })
+              }
+            } catch (e) {
+              console.warn("Draw overlay failed:", e)
+            }
+          }
+
+          for (const ov of overlayImages) {
+            // eslint-disable-next-line no-await-in-loop
+            await drawOverlay(ov)
+          }
+
           // Check if toBlob is supported
           if (typeof canvas.toBlob === 'function') {
             canvas.toBlob((blob) => {
               if (!blob) {
                 console.error("Canvas toBlob returned null")
-                fallbackDownload(dataUrl, scale)
+                fallbackDownload(objectUrl, scale)
                 return
               }
 
@@ -303,29 +367,42 @@ export function StampSection({ className }: StampSectionProps) {
 
                 // Clean up blob URL after download
                 setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
+                URL.revokeObjectURL(objectUrl)
 
                 console.log("Download completed successfully")
               } catch (blobError) {
                 console.error("Blob URL creation failed:", blobError)
-                fallbackDownload(dataUrl, scale)
+                fallbackDownload(objectUrl, scale)
               }
             })
           } else {
             console.warn("Canvas.toBlob not supported, using fallback")
-            fallbackDownload(dataUrl, scale)
+            fallbackDownload(objectUrl, scale)
           }
         } catch (canvasError) {
           console.error("Canvas processing failed:", canvasError)
-          fallbackDownload(dataUrl, 2)
+          fallbackDownload(objectUrl, 2)
         }
       }
 
       img.onerror = () => {
         console.error("Failed to load SVG image")
-        fallbackDownload(dataUrl, 2)
+        fallbackDownload(objectUrl, 2)
       }
 
-      img.src = dataUrl
+      // Ưu tiên decode() để đảm bảo ảnh sẵn sàng trước khi vẽ
+      img.src = objectUrl
+      if ("decode" in img && typeof img.decode === "function") {
+        try {
+          await (img as HTMLImageElement).decode()
+          onRender()
+        } catch (e) {
+          console.warn("Image decode() failed, fallback to onload", e)
+          img.onload = onRender
+        }
+      } else {
+        img.onload = onRender
+      }
     } catch (error) {
       console.error("Failed to export PNG:", error)
       alert("Có lỗi xảy ra khi tải về. Vui lòng thử lại hoặc liên hệ hỗ trợ.")
