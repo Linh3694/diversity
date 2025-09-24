@@ -20,8 +20,7 @@ const MOBILE_SLIDES = [
 
 export function MomentSection({ className, heightClassName }: MomentSectionProps) {
   const [index, setIndex] = useState<number>(0)
-  const [overlayIndex, setOverlayIndex] = useState<number | null>(null)
-  const [overlayVisible, setOverlayVisible] = useState<boolean>(false)
+  const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
   const [isMobile, setIsMobile] = useState<boolean>(false)
 
   const total = SLIDES.length
@@ -31,14 +30,6 @@ export function MomentSection({ className, heightClassName }: MomentSectionProps
     }
     return SLIDES[index % total]
   }, [index, total, isMobile])
-
-  const overlaySrc = useMemo(() => {
-    if (overlayIndex === null) return ""
-    if (isMobile) {
-      return MOBILE_SLIDES[overlayIndex]
-    }
-    return SLIDES[overlayIndex]
-  }, [overlayIndex, isMobile])
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -52,13 +43,13 @@ export function MomentSection({ className, heightClassName }: MomentSectionProps
   }, [])
 
   const goTo = useCallback((to: number) => {
-    if (overlayIndex !== null) return
-    setOverlayIndex(((to % total) + total) % total)
-    setOverlayVisible(false)
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setOverlayVisible(true))
-    })
-  }, [overlayIndex, total])
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    const newIndex = ((to % total) + total) % total
+    setIndex(newIndex)
+    // Reset transition state after animation completes
+    setTimeout(() => setIsTransitioning(false), 300)
+  }, [isTransitioning, total])
 
   const prev = useCallback(() => {
     goTo(index - 1)
@@ -101,32 +92,16 @@ export function MomentSection({ className, heightClassName }: MomentSectionProps
         <div className="relative mx-auto max-w-[1100px] rounded-[28px]">
           {/* Slide */}
           <div className="relative grid place-items-center px-6 py-8 md:px-10 md:py-10 overflow-hidden">
-            {/* Base image */}
             <img
+              key={currentSrc} // Force re-render when src changes
               src={currentSrc}
               alt="Moment"
-              className="block w-full h-auto select-none rounded"
+              className={cn(
+                "block w-full h-auto select-none rounded transition-opacity duration-200",
+                isTransitioning ? "opacity-70" : "opacity-100"
+              )}
               draggable={false}
             />
-            {/* Overlay image for fade transition */}
-            {overlayIndex !== null && (
-              <img
-                src={overlaySrc}
-                alt="Moment next"
-                className={cn(
-                  "pointer-events-none absolute inset-0 m-auto w-full max-w-[1100px] h-auto rounded select-none transition-opacity duration-500",
-                  overlayVisible ? "opacity-100" : "opacity-0",
-                )}
-                onTransitionEnd={() => {
-                  if (overlayIndex !== null && overlayVisible) {
-                    setIndex(overlayIndex)
-                    setOverlayIndex(null)
-                    setOverlayVisible(false)
-                  }
-                }}
-                draggable={false}
-              />
-            )}
           </div>
 
           {/* Arrows */}

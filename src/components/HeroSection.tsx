@@ -32,7 +32,7 @@ export function HeroSection({ className, heightClassName, onExploreClick }: Hero
       <div className="absolute inset-0" />
 
       {/* Gradient sương mù từ dưới lên trên */}
-      <div className="absolute -bottom-1 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent" />
+      {/* <div className="absolute -bottom-1 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent" /> */}
 
       {/* Explore button overlay, center horizontally, responsive positioning */}
       <button

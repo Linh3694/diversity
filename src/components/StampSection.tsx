@@ -678,7 +678,9 @@ export function StampSection({ className }: StampSectionProps) {
           </div>
         </div>
 
-        {/* Stamp sample image */}
+       
+      </div>
+       {/* Stamp sample image */}
         <div className="mt-16 text-center">
           {/* Desktop image */}
           <img
@@ -693,8 +695,7 @@ export function StampSection({ className }: StampSectionProps) {
             className="block md:hidden mx-auto max-w-full h-auto"
           />
         </div>
-      </div>
-    </section>
+  </section>
   )
 }
 

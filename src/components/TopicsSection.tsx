@@ -74,8 +74,24 @@ const TOPICS: TopicConfig[] = [
     bgClass: "bg-[#EA9A20]",
     accent: "#EA9A20",
     months: [
-      { id: "2025-10-10", label: "10/10/2025", photoSrc: "/Herosection-background.webp", disabled: true },
-      { id: "2025-11-07", label: "7/11/2025", photoSrc: "/Herosection-background.webp", disabled: true },
+      { 
+        id: "2025-10-10", 
+        label: "10/10/2025", 
+        photoSrc: "/10-10-2025.png",
+        variant: "special", 
+      },
+      { 
+        id: "2025-10-31", 
+        label: "31/10/2025", 
+        photoSrc: "/31-10-2025.png",
+        variant: "normal", 
+      },
+      { 
+        id: "2025-11-28", 
+        label: "28/11/2025", 
+        photoSrc: "/28-11-2025.png",
+        variant: "normal", 
+      },
     ],
   },
   {
@@ -86,8 +102,10 @@ const TOPICS: TopicConfig[] = [
     bgClass: "bg-[#0CA58A]",
     accent: "#0CA58A",
     months: [
-      { id: "2025-12-12", label: "12/2025", photoSrc: "/Herosection-background.webp", disabled: true },
-      { id: "2026-01-16", label: "1/2026", photoSrc: "/Herosection-background.webp", disabled: true },
+      { id: "2025-12-05", label: "5/12/2025", photoSrc: "/05-12-2025.png", variant: "normal"},
+      { id: "2025-12-19", label: "19/12/2025", photoSrc: "/19-12-2025.png", variant: "normal"},
+      { id: "2026-01-16", label: "16/1/2026", photoSrc: "/16-01-2026.png", variant: "normal"},
+      { id: "2026-01-30", label: "30/1/2026", photoSrc: "/30-01-2026.png", variant: "normal"},
     ],
   },
   {
@@ -98,8 +116,10 @@ const TOPICS: TopicConfig[] = [
     bgClass: "bg-[#BED100]",
     accent: "#BED100",
     months: [
-      { id: "2026-02-20", label: "2/2026", photoSrc: "/Herosection-background.webp", disabled: true },
-      { id: "2026-03-20", label: "3/2026", photoSrc: "/Herosection-background.webp", disabled: true },
+      { id: "2026-02-27", label: "27/2/2026", photoSrc: "/27-02-2026.png", variant: "normal"},
+      { id: "2026-03-13", label: "13/3/2026", photoSrc: "/13-03-2026.png", variant: "normal"},
+      { id: "2026-03-20", label: "20/3/2026", photoSrc: "/20-03-2026.png", variant: "normal"},
+      { id: "2026-03-27", label: "27/3/2026", photoSrc: "/27-03-2026.png", variant: "normal"},
     ],
   },
   {
@@ -110,8 +130,10 @@ const TOPICS: TopicConfig[] = [
     bgClass: "bg-[#EB4A25]",
     accent: "#EB4A25",
     months: [
-      { id: "2026-04-17", label: "4/2026", photoSrc: "/Herosection-background.webp", disabled: true },
-      { id: "2026-05-15", label: "5/2026", photoSrc: "/Herosection-background.webp", disabled: true },
+      { id: "2026-04-10", label: "10/4/2026", photoSrc: "/10-04-2026.png", variant: "normal"},
+      { id: "2026-04-24", label: "24/4/2026", photoSrc: "/24-04-2026.png", variant: "normal"},
+      { id: "2026-04-29", label: "29/4/2026", photoSrc: "/29-04-2026.png", variant: "normal"},
+      { id: "2026-05-15", label: "15/5/2026", photoSrc: "/15-05-2026.png", variant: "normal"},
     ],
   },
 ]
@@ -123,7 +145,6 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
   const detailsRef = useRef<HTMLDivElement | null>(null)
 
   const activeTopic = useMemo(() => TOPICS.find(t => t.key === activeTopicKey) || null, [activeTopicKey])
-  const activeIndex = useMemo(() => TOPICS.findIndex(t => t.key === activeTopicKey), [activeTopicKey])
   // Ghi chú: chi tiết tháng được xử lý trong TopicDetails, không cần tính trước ở đây
 
   useEffect(() => {
@@ -168,13 +189,11 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
               <button
                 key={t.key}
                 type="button"
-                onClick={() => t.key === "mindful" ? setActiveTopicKey(t.key) : null}
+                onClick={() => setActiveTopicKey(t.key)}
                 className={cn(
-                  "relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none",
-                  t.key !== "mindful" && "opacity-100 cursor-not-allowed"
+                  "relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none"
                 )}
                 aria-label={t.title}
-                disabled={t.key !== "mindful"}
               >
                 <img src={t.image} alt={t.title} className="block w-full h-auto" />
               </button>
@@ -183,18 +202,17 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
             <div className="hidden lg:block">
               <button
                 type="button"
-                onClick={() => null}
-                className="relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
+                onClick={() => setActiveTopicKey(TOPICS[2].key)}
+                className="relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none"
                 aria-label={TOPICS[2].title}
-                disabled={true}
               >
                 <img src={TOPICS[2].image} alt={TOPICS[2].title} className="block w-full h-auto" />
               </button>
             </div>
           </div>
 
-          {/* Details shows right after row 1 if a row-1 topic is active */}
-          {activeTopic && activeIndex >= 0 && activeIndex < 3 && (
+          {/* Details shows right after row 1 for any active topic */}
+          {activeTopic && (
             <div ref={detailsRef} className="w-full">
               <TopicDetails
                 topicTitle={activeTopic.title}
@@ -213,10 +231,9 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
               <button
                 key={t.key}
                 type="button"
-                onClick={() => null}
-                className="relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
+                onClick={() => setActiveTopicKey(t.key)}
+                className="relative w-full max-w-[300px] overflow-hidden rounded-[56px] focus:outline-none"
                 aria-label={t.title}
-                disabled={true}
               >
                 <img src={t.image} alt={t.title} className="block w-full h-auto" />
               </button>
@@ -232,26 +249,11 @@ export function TopicsSection({ className, language }: TopicsSectionProps) {
                 onClick={() => null}
                 className="relative w-full max-w-[200px] overflow-hidden rounded-[56px] focus:outline-none opacity-100 cursor-not-allowed"
                 aria-label={t.title}
-                disabled={true}
               >
                 <img src={t.image} alt={t.title} className="block w-full h-auto" />
               </button>
             ))}
           </div>
-
-          {/* Details shows after row 2 if a row-2 topic is active */}
-          {activeTopic && activeIndex >= 3 && (
-            <div ref={detailsRef} className="w-full">
-              <TopicDetails
-                topicTitle={activeTopic.title}
-                months={activeTopic.months}
-                activeMonthId={activeMonthId}
-                onSelectMonth={setActiveMonthId}
-                language={language}
-                accent={activeTopic.accent}
-              />
-            </div>
-          )}
         </div>
       </div>
 
@@ -370,7 +372,7 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
     return () => ro.disconnect()
   }, [])
   return (
-    <div className="relative z-10 rounded-2xl border-2 p-6 md:p-20 bg-[#FFFCFC]" style={{ borderColor: accent }}>
+    <div className="relative z-10 rounded-2xl border-2 p-6 md:p-16 bg-[#FFFCFC]" style={{ borderColor: accent }}>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
         <div ref={leftColRef} className="md:col-span-6">
           <h3 className="text-3xl md:text-5xl text-center lg:text-left font-daruma font-extrabold mb-8" style={{ color: accent }}>{monthLabel}</h3>
@@ -379,24 +381,36 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
           </div>
           <div className="block lg:hidden">
             <div className="font-semibold mb-3 text-[10px] leading-loose" style={{ color: accent }}>Dress code</div>
-            <div className="flex items-center gap-3">
-              {finalDressColors?.map((c, i) => (
-                <span 
-                  key={i} 
-                  className="inline-block h-6 w-6 rounded-full border-2" 
-                  style={{ 
-                    backgroundColor: c, 
-                    borderColor: 'rgba(0, 0, 0, 0.2)' 
-                  }} 
-                  aria-hidden 
+            {monthI18n?.dressImage ? (
+              <div className="flex items-center gap-3">
+                <img
+                  src={monthI18n.dressImage}
+                  alt="Dress code"
+                  className="h-8 w-8 object-contain rounded-full border-2"
+                  style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                 />
-              ))}
-            </div>
-            {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-[10px] leading-loose">{monthI18n?.dressCode?.[language]}</div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                {finalDressColors?.map((c, i) => (
+                  <span
+                    key={i}
+                    className="inline-block h-6 w-6 rounded-full border-2"
+                    style={{
+                      backgroundColor: c,
+                      borderColor: 'rgba(0, 0, 0, 0.2)'
+                    }}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+            )}
+            {monthI18n?.dressCode?.[language] ? (
+              <div className="mt-2 text-slate-600 text-[10px] leading-loose">{monthI18n.dressCode[language]}</div>
             ) : null}
           </div>
-          {localized?.quote && <p className="text-[10px] md:text-[16px] mb-2 font-semibold leading-[2] md:leading-[2.2]" style={{ color: accent }}>{localized.quote}</p>}
+          {localized?.title && <p className="text-[10px] md:text-[16px] mb-2 font-semibold leading-[2] md:leading-[2.2]" style={{ color: accent }}>{localized.title}</p>}
+          {localized?.quote && <p className="text-[#002855] text-[10px] md:text-[16px] mb-8 font-bold leading-[2] md:leading-[2.2]">{localized.quote}</p>}
           {localized?.paragraphs && (
             <div className="text-[#002855] text-[10px] lg:text-[16px] text-justify whitespace-pre-line leading-[2.0] md:leading-[2.3]">
               {localized.paragraphs.join('\n')}
@@ -421,29 +435,42 @@ function NormalMonthContent({ monthId, monthLabel, topicTitle, language, photoSr
         </div>
 
         <div className="md:col-span-6">
-          <div className="hidden lg:block relative w-[348px] h-[450px] mx-auto">
+          <div className="hidden lg:block">
+            <div className="font-semibold mb-3 text-lg leading-loose" style={{ color: accent }}>Dress code</div>
+            {monthI18n?.dressImage ? (
+              <div className="flex items-center gap-8">
+                <img
+                  src={monthI18n.dressImage}
+                  alt="Dress code"
+                  className="h-12 w-12 object-cover rounded-full border-2"
+                  style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
+                />
+              </div>
+            ) : (
+              <div className="flex items-center gap-8">
+                {finalDressColors?.map((c, i) => (
+                  <span
+                    key={i}
+                    className="inline-block h-10 w-10 rounded-full border-2"
+                    style={{
+                      backgroundColor: c,
+                      borderColor: 'rgba(0, 0, 0, 0.2)'
+                    }}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+            )}
+            {monthI18n?.dressCode?.[language] ? (
+              <div className="mt-2 text-slate-600 text-md leading-loose">{monthI18n.dressCode[language]}</div>
+            ) : null}
+          </div>
+          
+          <div className="hidden lg:block relative w-[360px] h-[500px] mx-auto mt-4">
             <img src={topicsI18n[monthId]?.photoSrc || photoSrc} alt={topicTitle} className="block w-full h-full object-contain object-top" />
           </div>
           {/* Dress code moved below the image */}
-          <div className="hidden lg:block mt-8">
-            <div className="font-semibold mb-3 text-lg leading-loose" style={{ color: accent }}>Dress code</div>
-            <div className="flex items-center gap-8">
-              {finalDressColors?.map((c, i) => (
-                <span 
-                  key={i} 
-                  className="inline-block h-10 w-10 rounded-full border-2" 
-                  style={{ 
-                    backgroundColor: c, 
-                    borderColor: 'rgba(0, 0, 0, 0.2)' 
-                  }} 
-                  aria-hidden 
-                />
-              ))}
-            </div>
-            {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-lg leading-loose">{monthI18n?.dressCode?.[language]}</div>
-            ) : null}
-          </div>
+          
         </div>
       </div>
     </div>
@@ -468,24 +495,36 @@ function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoS
           </div>
           <div className="block lg:hidden lg:mb-8 mb-4">
             <div className="font-semibold mb-3 text-[10px] leading-loose" style={{ color: specialColor }}>Dress code</div>
-            <div className="flex items-center gap-3">
-              {finalDressColors?.map((c, i) => (
-                <span 
-                  key={i} 
-                  className="inline-block h-6 w-6 rounded-full border-2" 
-                  style={{ 
-                    backgroundColor: c, 
-                    borderColor: 'rgba(0, 0, 0, 0.2)' 
-                  }} 
-                  aria-hidden 
+            {monthI18n?.dressImage ? (
+              <div className="flex items-center gap-3">
+                <img
+                  src={monthI18n.dressImage}
+                  alt="Dress code"
+                  className="h-8 w-8 object-contain rounded-full border-2"
+                  style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                 />
-              ))}
-            </div>
-            {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-[10px] leading-loose">{monthI18n?.dressCode?.[language]}</div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                {finalDressColors?.map((c, i) => (
+                  <span
+                    key={i}
+                    className="inline-block h-6 w-6 rounded-full border-2"
+                    style={{
+                      backgroundColor: c,
+                      borderColor: 'rgba(0, 0, 0, 0.2)'
+                    }}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+            )}
+            {monthI18n?.dressCode?.[language] ? (
+              <div className="mt-2 text-slate-600 text-[10px] leading-loose">{monthI18n.dressCode[language]}</div>
             ) : null}
           </div>
-          {localized?.quote && <p className="text-[10px] md:text-lg lg:mb-4 mb-2 mt-2 lg:mt-0 font-semibold leading-[2] md:leading-[2.2]" style={{ color: specialColor }}>{localized.quote}</p>}
+          {localized?.title && <p className="text-[10px] md:text-lg lg:mb-4 mb-2 mt-2 lg:mt-0 font-bold leading-[2] md:leading-[2.2]" style={{ color: specialColor }}>{localized.title}</p>}
+          {localized?.quote && <p className="text-[#002855] text-[10px] md:text-lg lg:mb-4 mb-2 mt-2 lg:mt-0 font-semibold leading-[2] md:leading-[2.2]">{localized.quote}</p>}
           {localized?.paragraphs && (
             <div className="text-[#002855] text-[10px] md:text-[16px] text-justify leading-[2.0] md:leading-[2.1]">
               {localized.paragraphs.join('\n')}
@@ -516,21 +555,32 @@ function SpecialMonthContent({ monthId, monthLabel, topicTitle, language, photoS
           {/* Dress code moved below the image */}
           <div className="hidden lg:block mt-8">
             <div className="font-semibold mb-3 text-[16px] leading-loose" style={{ color: specialColor }}>Dress code</div>
-            <div className="flex items-center gap-8">
-              {finalDressColors?.map((c, i) => (
-                <span 
-                  key={i} 
-                  className="inline-block h-10 w-10 rounded-full border-2" 
-                  style={{ 
-                    backgroundColor: c, 
-                    borderColor: 'rgba(0, 0, 0, 0.2)' 
-                  }} 
-                  aria-hidden 
+            {monthI18n?.dressImage ? (
+              <div className="flex items-center gap-8">
+                <img
+                  src={monthI18n.dressImage}
+                  alt="Dress code"
+                  className="h-12 w-12 object-contain rounded-full border-2"
+                  style={{ borderColor: 'rgba(0, 0, 0, 0.2)' }}
                 />
-              ))}
-            </div>
-            {finalDressColors?.length ? (
-              <div className="mt-2 text-slate-600 text-[16px] leading-loose">{monthI18n?.dressCode?.[language]}</div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-8">
+                {finalDressColors?.map((c, i) => (
+                  <span
+                    key={i}
+                    className="inline-block h-10 w-10 rounded-full border-2"
+                    style={{
+                      backgroundColor: c,
+                      borderColor: 'rgba(0, 0, 0, 0.2)'
+                    }}
+                    aria-hidden
+                  />
+                ))}
+              </div>
+            )}
+            {monthI18n?.dressCode?.[language] ? (
+              <div className="mt-2 text-slate-600 text-[16px] leading-loose">{monthI18n.dressCode[language]}</div>
             ) : null}
           </div>
         </div>
